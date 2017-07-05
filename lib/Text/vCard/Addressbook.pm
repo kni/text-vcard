@@ -299,9 +299,11 @@ sub _pre_process_text {
         my $inside = 0;
         foreach my $line ( split( "\x0D\x0A", $text ) ) {
 
+            $line .= "\x0D\x0A";
+
             if ($inside) {
-                if ( $line =~ /=$/ ) {
-                    $line =~ s/=$//;
+                if ( $line =~ /=\x0D\x0A$/ ) {
+                    $line =~ s/=\x0D\x0A$//;
                 } else {
                     $inside = 0;
                 }
@@ -309,9 +311,9 @@ sub _pre_process_text {
 
             if ( $line =~ /ENCODING=QUOTED-PRINTABLE/i ) {
                 $inside = 1;
-                $line =~ s/=$//;
+                $line =~ s/=\x0D\x0A$//;
             }
-            $out .= $line . "\x0D\x0A";
+            $out .= $line;
         }
         $text = $out;
 
